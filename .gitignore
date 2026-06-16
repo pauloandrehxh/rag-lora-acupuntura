@@ -1,0 +1,26 @@
+# Ambientes Virtuais
+.venv/
+venv/
+__pycache__/
+
+# Dados e Modelos (Não comitar arquivos gigantes para o GitHub)
+*.zip
+dataset_gerado.jsonl
+acupuntura.pdf
+lora_causal_*/
+lora_seq2seq_*/
+tokenizer_*/
+
+# Arquivos de Compilação do LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+
+# Outros
+.DS_Store
