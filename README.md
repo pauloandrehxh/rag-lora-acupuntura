@@ -18,9 +18,8 @@ Este repositório contém o pipeline completo de Inteligência Artificial Genera
   * `03_avaliacao_modelo_finetuned.ipynb`: Benchmarking com ROUGE, BLEU e Perplexidade.
 * `main.py`: Código-fonte da API construída com FastAPI e inferência dinâmica do HuggingFace.
 * `requirements.txt`: Dependências fixas e otimizadas para estabilidade do projeto.
-* `doc_tecnica/`: Relatório LaTeX, referências bib e gráficos estatísticos de performance.
 
-*(Nota: Os arquivos pesados `.zip`, datasets e pesos LoRA não estão versionados devido ao limite de tamanho do GitHub).*
+*(Nota: Os arquivos pesados `.zip`, PDFs fontes, datasets e pesos LoRA não estão versionados devido ao limite de tamanho do GitHub).*
 
 ---
 
@@ -54,7 +53,7 @@ pip install -r requirements.txt
 
 Caso deseje recriar os modelos e treinar o dataset do zero (Idealmente via Google Colab para acesso a GPUs):
 
-1. Faça o upload do documento fonte (`acupuntura.pdf`) e rode o `01_rag.ipynb` de cima a baixo para gerar o arquivo `dataset_gerado.jsonl`.
+1. Faça o upload do seu documento de origem em PDF para a raiz do Colab e rode o `01_rag.ipynb` de cima a baixo para gerar o arquivo `dataset_gerado.jsonl`.
 2. Em seguida, rode o `02_lora.ipynb`. O código irá salvar os adaptadores e gerar o `modelos_treinados.zip`.
 3. Finalmente, rode o `03_avaliacao_modelo_finetuned.ipynb` para ver a disparidade de performance entre arquiteturas Causais e Seq2Seq.
 
