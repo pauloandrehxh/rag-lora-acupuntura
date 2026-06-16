@@ -1,113 +1,103 @@
-# 🧪 Laboratório: Clone do ChatGPT com FastAPI + LoRA
+# 🪡 RAG & LoRA: QA Especializado em Acupuntura Clássica Chinesa
 
-Interface web minimalista para interagir com modelos de linguagem HuggingFace
-(modelo base e fine-tunado com LoRA) via API REST construída com FastAPI.
+Este repositório contém o pipeline completo de Inteligência Artificial Generativa desenvolvido para responder a perguntas técnicas sobre Acupuntura Clássica Chinesa. O sistema emprega Geração Aumentada por Recuperação (RAG) para gerar um dataset sintético de instrução e, em seguida, aplica *Low-Rank Adaptation* (LoRA) para o *Fine-Tuning* paramétrico eficiente de quatro modelos pretreinados diferentes.
 
----
-
-## Estrutura do Projeto
-
-```
-chatgpt-clone/
-│
-├── main.py               ← Backend FastAPI (API + servidor de arquivos)
-├── requirements.txt      ← Dependências Python
-├── README.md             ← Este arquivo
-│
-├── static/
-│   └── index.html        ← Front-end (HTML + CSS + JS puro)
-│
-└── lora_finetuned_model/ ← (coloque aqui os adaptadores LoRA)
-    └── distilgpt2_tokenizer/  ← (coloque aqui o tokenizador salvo)
-```
+**Modelos Avaliados:**
+* 🧠 **Pythia-160M** (Causal)
+* 🧠 **GPT-Neo-125M** (Causal)
+* 🏆 **Flan-T5 Base** (Seq2Seq) - *Modelo Campeão da Pesquisa*
+* 🌐 **mT5 Small** (Seq2Seq)
 
 ---
 
-## Instalação
+## 📂 Estrutura do Projeto
 
+* `notebooks/`: Cadernos Jupyter contendo a execução lógica das etapas do projeto.
+  * `01_rag.ipynb`: Leitura do PDF, processamento e geração do dataset com Gemma-2b-it.
+  * `02_lora.ipynb`: Treinamento LoRA dos quatro modelos selecionados.
+  * `03_avaliacao_modelo_finetuned.ipynb`: Benchmarking com ROUGE, BLEU e Perplexidade.
+* `main.py`: Código-fonte da API construída com FastAPI e inferência dinâmica do HuggingFace.
+* `requirements.txt`: Dependências fixas e otimizadas para estabilidade do projeto.
+* `doc_tecnica/`: Relatório LaTeX, referências bib e gráficos estatísticos de performance.
+
+*(Nota: Os arquivos pesados `.zip`, datasets e pesos LoRA não estão versionados devido ao limite de tamanho do GitHub).*
+
+---
+
+## 🛠 Instalação Local
+
+Este projeto foi testado em ambiente Linux (Ubuntu). Recomenda-se o uso de um ambiente virtual para isolar as dependências.
+
+1. **Clone o repositório:**
 ```bash
-# 1. Clone ou copie o projeto
-cd chatgpt-clone
+git clone https://github.com/pauloandrehxh/rag-lora-acupuntura.git
+cd rag-lora-acupuntura
+```
 
-# 2. Crie um ambiente virtual (recomendado)
-python -m venv .venv
-source .venv/bin/activate   # Linux/Mac
-.venv\Scripts\activate      # Windows
+2. **Crie e ative o ambiente virtual:**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
 
-# 3. Instale as dependências
+3. **Instale as dependências:**
+```bash
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
+*(Caso os pacotes gerem conflito na importação de arquiteturas LoRA, rode `pip install -U peft`)*
+
 ---
 
-## Executando o Servidor
+## 🚀 Execução do Pipeline (Treinamento)
 
+Caso deseje recriar os modelos e treinar o dataset do zero (Idealmente via Google Colab para acesso a GPUs):
+
+1. Faça o upload do documento fonte (`acupuntura.pdf`) e rode o `01_rag.ipynb` de cima a baixo para gerar o arquivo `dataset_gerado.jsonl`.
+2. Em seguida, rode o `02_lora.ipynb`. O código irá salvar os adaptadores e gerar o `modelos_treinados.zip`.
+3. Finalmente, rode o `03_avaliacao_modelo_finetuned.ipynb` para ver a disparidade de performance entre arquiteturas Causais e Seq2Seq.
+
+---
+
+## ⚙️ Execução da API Local (Uso)
+
+Para subir o sistema visual e testar os modelos já treinados, a sua máquina deve possuir as pastas exportadas pelo passo anterior (`lora_causal...` e `tokenizer...`) salvas na pasta raiz.
+
+1. Inicie o servidor FastAPI:
 ```bash
-# Opção 1: direto pelo Python
-python main.py
-
-# Opção 2: via uvicorn (recomendado)
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn main:app --reload
 ```
-
-Acesse: **http://localhost:8000**
+2. O terminal indicará o boot da aplicação e o carregamento do modelo base hospedado no *HuggingFace* entrelaçado aos seus adaptadores LoRA locais.
+3. Acesse a Interface de Chat:
+   * **Navegador**: [http://localhost:8000](http://localhost:8000)
 
 ---
 
-## Usando o Modelo Fine-tunado (LoRA)
+## 🔌 Exemplos de Uso da API via Terminal (cURL)
 
-Coloque os arquivos do seu modelo fine-tunado no diretório raiz:
+A API fornece um roteamento dinâmico que permite interrogar qualquer modelo pela porta lógica `/chat`. 
 
-```
-chatgpt-clone/
-├── lora_finetuned_model/    ← adaptadores LoRA + config
-│   ├── config.json
-│   ├── adapter_model.bin
-│   └── ...
-└── distilgpt2_tokenizer/    ← tokenizador salvo localmente
-    ├── tokenizer.json
-    └── ...
-```
-
-Se os diretórios não existirem, a aplicação usa o modelo base como **fallback** automático.
-
----
-
-## Endpoints da API
-
-| Método | Rota       | Descrição                          |
-|--------|------------|------------------------------------|
-| GET    | `/`        | Interface web do chat              |
-| GET    | `/modelos` | Lista modelos disponíveis          |
-| POST   | `/chat`    | Envia mensagem, recebe resposta    |
-| GET    | `/health`  | Status do servidor e modelos       |
-| GET    | `/docs`    | Documentação interativa (Swagger)  |
-
-### Exemplo: POST /chat
-
+**Requisição de Exemplo:**
 ```bash
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{
-    "modelo": "distilgpt2-base",
-    "mensagem": "What is machine learning?",
-    "max_tokens": 100,
-    "temperatura": 0.7
-  }'
+curl -X POST "http://127.0.0.1:8000/chat" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "mensagem": "Qual a localização do meridiano Ren-Mai?",
+           "modelo": "seq2seq-flant5",
+           "max_tokens": 150,
+           "temperatura": 0.1
+         }'
+```
+
+**Resposta (JSON):**
+```json
+{
+  "resposta": "O meridiano Ren-Mai percorre a linha que se encontra entre a gengiva e a mucosa do lábio inferior.",
+  "modelo_usado": "seq2seq-flant5",
+  "tipo": "seq2seq"
+}
 ```
 
 ---
-
-## Parâmetros de Geração
-
-| Parâmetro    | Descrição                                              | Padrão |
-|--------------|--------------------------------------------------------|--------|
-| `temperatura`| Aleatoriedade da geração (0.1 = preciso, 1.5 = criativo)| 0.7   |
-| `max_tokens` | Máximo de tokens novos gerados                         | 150    |
-
----
-
-## Documentação Interativa
-
-Com o servidor rodando, acesse **http://localhost:8000/docs** para a interface
-Swagger gerada automaticamente pelo FastAPI.
+*Projeto acadêmico desenvolvido para a disciplina de Tópicos Avançados em Inteligência Artificial A - UFRN / CERES / DCT.*
