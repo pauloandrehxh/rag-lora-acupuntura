@@ -17,9 +17,11 @@ Este repositório contém o pipeline completo de Inteligência Artificial Genera
   * `02_lora.ipynb`: Treinamento LoRA dos quatro modelos selecionados.
   * `03_avaliacao_modelo_finetuned.ipynb`: Benchmarking com ROUGE, BLEU e Perplexidade.
 * `main.py`: Código-fonte da API construída com FastAPI e inferência dinâmica do HuggingFace.
+* `dataset_gerado.jsonl`: Dataset sintético final com 767 pares gerado via RAG.
+* `resultados_avaliacao/`: Tabelas CSV e gráficos png com as métricas (BLEU, ROUGE) de todos os modelos.
 * `requirements.txt`: Dependências fixas e otimizadas para estabilidade do projeto.
 
-*(Nota: Os arquivos pesados `.zip`, PDFs fontes, datasets e pesos LoRA não estão versionados devido ao limite de tamanho do GitHub).*
+*(Nota: Os arquivos pesados `.zip`, PDFs fontes e pesos LoRA não estão versionados devido ao limite de tamanho do GitHub).*
 
 ---
 

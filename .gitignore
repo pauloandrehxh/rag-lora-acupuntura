@@ -5,7 +5,6 @@ __pycache__/
 
 # Dados e Modelos (Não comitar arquivos gigantes para o GitHub)
 *.zip
-dataset_gerado.jsonl
 acupuntura.pdf
 lora_causal_*/
 lora_seq2seq_*/
